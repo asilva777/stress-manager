@@ -1,0 +1,73 @@
+let chart;
+let stressHistory = JSON.parse(localStorage.getItem('stressData')) || [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  initChart();
+  populateHistory();
+  setupCollapsibles();
+  switchTab('education');
+});
+
+function initChart() {
+  const ctx = document.getElementById('stressChart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: stressHistory.map(item => item.date),
+      datasets: [{
+        label: 'Stress Level',
+        data: stressHistory.map(item => item.value),
+        borderColor: 'rgba(255,99,132,1)',
+        fill: false
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { min: 0, max: 100 }
+      }
+    }
+  });
+}
+
+function connectHRV() {
+  // Simulated data for demo
+  const fakeStress = Math.floor(Math.random() * 80) + 20;
+  const today = new Date().toLocaleDateString();
+
+  const newEntry = { date: today, value: fakeStress };
+  stressHistory.push(newEntry);
+  localStorage.setItem('stressData', JSON.stringify(stressHistory));
+  chart.data.labels.push(today);
+  chart.data.datasets[0].data.push(fakeStress);
+  chart.update();
+  populateHistory();
+  alert(`Simulated HRV result: ${fakeStress}`);
+}
+
+function populateHistory() {
+  const historyEl = document.getElementById('historyList');
+  historyEl.innerHTML = '';
+  stressHistory.forEach(entry => {
+    const li = document.createElement('li');
+    li.textContent = `${entry.date}: Stress Level ${entry.value}`;
+    historyEl.appendChild(li);
+  });
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  document.getElementById(tabName).classList.add('active');
+}
+
+function setupCollapsibles() {
+  const headers = document.querySelectorAll('.collapsible-header');
+  headers.forEach(header => {
+    header.addEventListener('click', () => {
+      const content = header.nextElementSibling;
+      content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    });
+  });
+}
