@@ -1,0 +1,26 @@
+function parseHeartRate(value) {
+  value = value.buffer ? value : value.value;
+  const data = new DataView(value.buffer || value);
+  let index = 1;
+  const flags = data.getUint8(0);
+
+  // Heart rate value format
+  const hrValue = flags & 0x01 ? data.getUint16(index, true) : data.getUint8(index);
+  index += (flags & 0x01) ? 2 : 1;
+
+  // Skip sensor contact & energy expended if present
+  if (flags & 0x06) index += 2;
+
+  // RR-Interval values
+  const rrIntervals = [];
+  while (index + 1 < data.byteLength) {
+    const rr = data.getUint16(index, true);
+    rrIntervals.push(rr);
+    index += 2;
+  }
+
+  return {
+    bpm: hrValue,
+    rrIntervals: rrIntervals.map(rr => rr / 1024) // convert to seconds
+  };
+}
