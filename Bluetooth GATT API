@@ -1,0 +1,33 @@
+async function connectHRV() {
+  try {
+    const device = await navigator.bluetooth.requestDevice({
+      filters: [{ services: ['heart_rate'] }]
+    });
+
+    const server = await device.gatt.connect();
+    const service = await server.getPrimaryService('heart_rate');
+    const characteristic = await service.getCharacteristic('heart_rate_measurement');
+
+    characteristic.addEventListener('characteristicvaluechanged', event => {
+      const { bpm, rrIntervals } = parseHeartRate(event.target.value);
+      const hrvScore = calculateHRV(rrIntervals);
+
+      const today = new Date().toLocaleDateString();
+      const newEntry = { date: today, value: hrvScore };
+
+      stressHistory.push(newEntry);
+      localStorage.setItem('stressData', JSON.stringify(stressHistory));
+      chart.data.labels.push(today);
+      chart.data.datasets[0].data.push(hrvScore);
+      chart.update();
+      populateHistory();
+    });
+
+    await characteristic.startNotifications();
+    alert("Connected to HRV monitor. Receiving data...");
+
+  } catch (error) {
+    console.error("Bluetooth connection failed:", error);
+    alert("Failed to connect. Please make sure your HRV device is nearby and supports Bluetooth GATT.");
+  }
+}
