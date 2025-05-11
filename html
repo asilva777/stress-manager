@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stress Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app">
+    <h1>Stress Tracker</h1>
+
+    <!-- Chart Section -->
+    <section id="tracker">
+      <button onclick="connectHRV()">Connect HRV Monitor</button>
+      <canvas id="stressChart" height="100"></canvas>
+    </section>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button onclick="switchTab('education')">Education</button>
+      <button onclick="switchTab('history')">History</button>
+    </div>
+
+    <!-- Education Content -->
+    <section id="education" class="tab-content">
+      <h2>Understanding Stress</h2>
+      <div class="collapsible">
+        <button class="collapsible-header">What is Stress?</button>
+        <div class="content">
+          <p>Stress is our brain’s and/or body’s response to any demand...</p>
+        </div>
+
+        <button class="collapsible-header">Chronic Stress</button>
+        <div class="content">
+          <p>Chronic stress is a prolonged challenge that disrupts life...</p>
+        </div>
+
+        <button class="collapsible-header">HRV & Measurement</button>
+        <div class="content">
+          <p>HRV (Heart Rate Variability) indicates stress response...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- History -->
+    <section id="history" class="tab-content hidden">
+      <h2>Stress History</h2>
+      <ul id="historyList"></ul>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
