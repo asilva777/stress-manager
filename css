@@ -1,0 +1,57 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f4f8;
+  color: #333;
+  margin: 0;
+  padding: 1em;
+}
+
+.app {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 2em;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #ccc;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 10px 0;
+  cursor: pointer;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #005fa3;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.tabs button {
+  margin-right: 10px;
+}
+
+.collapsible-header {
+  background: #eee;
+  border: none;
+  text-align: left;
+  padding: 10px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.content {
+  padding: 10px;
+  background: #f9f9f9;
+  display: none;
+}
