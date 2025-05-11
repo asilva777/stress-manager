@@ -1,0 +1,27 @@
+async function connectHRV() {
+  const device = await navigator.bluetooth.requestDevice({
+    filters: [{ services: ['heart_rate'] }]
+  });
+
+  const server = await device.gatt.connect();
+  const service = await server.getPrimaryService('heart_rate');
+  const characteristic = await service.getCharacteristic('heart_rate_measurement');
+
+  characteristic.addEventListener('characteristicvaluechanged', event => {
+    const value = parseHeartRate(event.target.value);
+    processHRV(value);
+  });
+
+  await characteristic.startNotifications();
+}
+
+function processHRV(hr) {
+  const score = 100 - hr; // Simple mock conversion
+  const today = new Date().toLocaleDateString();
+  stressHistory.push({ date: today, value: score });
+  localStorage.setItem('stressData', JSON.stringify(stressHistory));
+  chart.data.labels.push(today);
+  chart.data.datasets[0].data.push(score);
+  chart.update();
+  populateHistory();
+}
