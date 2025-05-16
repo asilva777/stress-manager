@@ -1,229 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stress Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-
-    #connectBtn {
-      display: block;
-      margin: 0 auto 20px;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    #connectBtn:hover {
-      background-color: #0056b3;
-    }
-
-    #scoreDisplay {
-      text-align: center;
-      font-size: 24px;
-      margin-bottom: 20px;
-      color: #444;
-    }
-
-    canvas {
-      max-width: 100%;
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-bottom: 40px;
-    }
-
-    .collapsible {
-      background-color: #e2e2e2;
-      color: #000;
-      cursor: pointer;
-      padding: 14px 20px;
-      width: 100%;
-      border: none;
-      text-align: left;
-      outline: none;
-      font-size: 16px;
-      border-radius: 6px;
-      margin: 10px 0;
-    }
-
-    .collapsible:hover {
-      background-color: #ccc;
-    }
-
-    .content {
-      display: none;
-      padding: 0 20px 20px;
-      background-color: #fff;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .content p {
-      margin: 10px 0;
-    }
-  </style>
-</head>
-<body>
-
-  <h1>Stress Tracker</h1>
-
-  <button id="connectBtn">Connect to HRV Monitor</button>
-  <div id="scoreDisplay">Stress Score: <span id="stressScore">--</span></div>
-  <canvas id="stressChart" height="100"></canvas>
-
-  <button class="collapsible">What is Stress?</button>
-  <div class="content">
-    <p>Stress is our body’s response to demands. It can be positive or negative. Chronic stress is linked to illness and emotional strain. Managing stress is crucial for health.</p>
-  </div>
-
-  <button class="collapsible">How to Measure Stress?</button>
-  <div class="content">
-    <p>Heart Rate Variability (HRV) is a reliable method. Less variability = higher stress. This app uses HRV via Bluetooth devices to assess your stress level using RMSSD.</p>
-  </div>
-
-  <button class="collapsible">How to Manage Stress?</button>
-  <div class="content">
-    <p>Practice mindfulness, meditation, physical activity, and get support. Apps can help, but consult healthcare providers if symptoms persist.</p>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    const connectBtn = document.getElementById("connectBtn");
-    const scoreElem = document.getElementById("stressScore");
-    const ctx = document.getElementById("stressChart").getContext("2d");
-
-    let stressChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Stress Score',
-          data: [],
-          borderColor: 'rgba(255,99,132,1)',
-          backgroundColor: 'rgba(255,99,132,0.2)',
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            min: 0,
-            max: 100
-          }
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Stress Manager | Cognitio+</title>  
+    <link rel="stylesheet" href="styles/style.css">  
+    <link rel="preconnect" href="https://fonts.googleapis.com">  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">  
+    <style>  
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
         }
-      }
-    });
 
-    function calculateRMSSD(rrIntervals) {
-      if (rrIntervals.length < 2) return 0;
-      let diffs = rrIntervals.slice(1).map((val, i) => val - rrIntervals[i]);
-      let squares = diffs.map(d => d * d);
-      let meanSquare = squares.reduce((sum, val) => sum + val, 0) / squares.length;
-      return Math.sqrt(meanSquare);
-    }
+        header {
+            background-color: #f8f9fc;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
 
-    function rmssdToStressScore(rmssd) {
-      const maxRMSSD = 100;
-      const minRMSSD = 10;
-      let normalized = (rmssd - minRMSSD) / (maxRMSSD - minRMSSD);
-      let stress = 100 - (normalized * 100);
-      return Math.max(0, Math.min(100, Math.round(stress)));
-    }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #21334f;
+        }
 
-    function updateStressChart(score) {
-      let now = new Date().toLocaleTimeString();
-      stressChart.data.labels.push(now);
-      stressChart.data.datasets[0].data.push(score);
-      stressChart.update();
+        header p {
+            font-size: 1.1rem;
+            color: #6b7280;
+        }
 
-      let history = JSON.parse(localStorage.getItem("stressHistory")) || [];
-      history.push({ time: now, score });
-      localStorage.setItem("stressHistory", JSON.stringify(history));
-    }
+        main {
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    function loadHistory() {
-      let history = JSON.parse(localStorage.getItem("stressHistory")) || [];
-      history.forEach(entry => {
-        stressChart.data.labels.push(entry.time);
-        stressChart.data.datasets[0].data.push(entry.score);
-      });
-      stressChart.update();
-    }
+        button#measureButton {
+            padding: 14px 28px;
+            font-size: 1rem;
+            background-color: #384dfc;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
 
-    async function connectToHRVMonitor() {
-      try {
-        const device = await navigator.bluetooth.requestDevice({
-          filters: [{ services: ['heart_rate'] }]
-        });
+        button#measureButton:hover {
+            background-color: #2e3ed6;
+        }
 
-        const server = await device.gatt.connect();
-        const service = await server.getPrimaryService('heart_rate');
-        const characteristic = await service.getCharacteristic('heart_rate_measurement');
+        section#resultsSection {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
 
-        characteristic.addEventListener("characteristicvaluechanged", handleHRVData);
-        await characteristic.startNotifications();
-        console.log("Connected and listening for HRV data...");
-      } catch (err) {
-        alert("Connection failed: " + err);
-      }
-    }
+        section#resultsSection h2 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #21334f;
+        }
 
-    let rrBuffer = [];
+        #results p {
+            margin: 8px 0;
+            font-size: 1rem;
+            color: #333;
+        }
 
-    function handleHRVData(event) {
-      const data = event.target.value;
-      const flags = data.getUint8(0);
-      const rrPresent = (flags & 0x10) > 0;
-      if (!rrPresent) return;
+        .hidden {
+            display: none;
+        }
+    </style>  
+</head>  
+<body>  
+    <!-- Header of the app -->  
+    <header>  
+        <h1>Stress Manager</h1>  
+        <p>Monitor your stress, energy, and productivity with Stress Manager</p>  
+    </header>  
 
-      let offset = 1;
-      let rrIntervals = [];
+    <!-- Main application interface -->  
+    <main>  
+        <!-- Button to trigger stress measurement via Welltory -->  
+        <button id="measureButton">Measure Now</button>  
 
-      while (offset + 1 < data.byteLength) {
-        const rr = data.getUint16(offset, true);
-        rrIntervals.push(rr);
-        offset += 2;
-      }
+        <!-- Section to display the returned results -->  
+        <section id="resultsSection" class="hidden">  
+            <h2>Measurement Results</h2>  
+            <div id="results"></div>  
+        </section>  
+    </main>  
 
-      rrBuffer.push(...rrIntervals);
-
-      if (rrBuffer.length >= 20) {
-        const rmssd = calculateRMSSD(rrBuffer.slice(-20));
-        const stressScore = rmssdToStressScore(rmssd);
-        scoreElem.textContent = stressScore;
-        updateStressChart(stressScore);
-      }
-    }
-
-    connectBtn.addEventListener("click", connectToHRVMonitor);
-
-    document.querySelectorAll(".collapsible").forEach(btn => {
-      btn.addEventListener("click", function () {
-        this.classList.toggle("active");
-        const content = this.nextElementSibling;
-        content.style.display = (content.style.display === "block") ? "none" : "block";
-      });
-    });
-
-    window.addEventListener("DOMContentLoaded", loadHistory);
-  </script>
-</body>
+    <!-- JavaScript connection -->  
+    <script src="scripts/app.js"></script>  
+</body>  
 </html>
