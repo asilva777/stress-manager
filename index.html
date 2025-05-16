@@ -8,12 +8,31 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">  
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">  
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
     <style>  
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
             background-color: #ffffff;
             color: #1a1a1a;
+        }
+
+        nav {
+            background-color: #21334f;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
         }
 
         header {
@@ -82,28 +101,114 @@
         .hidden {
             display: none;
         }
+
+        section#chartSection {
+            margin-top: 30px;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .accordion {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .accordion-header {
+            font-weight: 600;
+            padding: 16px;
+            background: #eef2f7;
+            cursor: pointer;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 16px;
+            background: #ffffff;
+        }
+
+        .accordion-content.active {
+            display: block;
+        }
     </style>  
 </head>  
 <body>  
+    <!-- Navigation Bar -->
+    <nav>
+        <a href="https://resiienceone.appimize.app" target="_blank">Home</a>
+        <a href="https://app.welltory.com/lms/courses" target="_blank">Learning Resources</a>
+        <a href="https://welltory.com/#" target="_blank">Download App</a>
+    </nav>
+
     <!-- Header of the app -->  
     <header>  
         <h1>Stress Manager</h1>  
-        <p>Monitor your stress, energy, and productivity with Stress Manager</p>  
+        <p>Monitor your stress, energy, and productivity with Welltory</p>  
     </header>  
 
     <!-- Main application interface -->  
     <main>  
         <!-- Button to trigger stress measurement via Welltory -->  
-        <button id="measureButton">Measure Now</button>  
+        <a href="https://welltory.com/app/" target="_blank" id="measureButton" style="text-decoration: none; display: inline-block;">
+            <button style="all: unset; padding: 14px 28px; font-size: 1rem; background-color: #384dfc; color: #ffffff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background-color 0.3s ease;">
+                Measure Now
+            </button>
+        </a>
 
         <!-- Section to display the returned results -->  
         <section id="resultsSection" class="hidden">  
             <h2>Measurement Results</h2>  
             <div id="results"></div>  
         </section>  
+
+        <!-- Section to show stress trend chart -->
+        <section id="chartSection">
+            <canvas id="stressChart"></canvas>
+        </section>
+
+        <!-- Educational content -->
+        <div class="accordion">
+            <div class="accordion-item">
+                <div class="accordion-header">What is HRV?</div>
+                <div class="accordion-content">Heart Rate Variability (HRV) is the variation in time between heartbeats and is a key indicator of stress and recovery.</div>
+            </div>
+            <div class="accordion-item">
+                <div class="accordion-header">How to Interpret Stress Levels</div>
+                <div class="accordion-content">Low HRV often indicates stress, while higher HRV suggests a more relaxed state. Consistency and trends are more important than individual scores.</div>
+            </div>
+            <div class="accordion-item">
+                <div class="accordion-header">What Welltory Measures & Why It Works</div>
+                <div class="accordion-content">
+                    Welltory measures your Heart Rate Variability (HRV), not just your heart rate. HRV is the difference in time intervals between heartbeats, providing insights into your autonomic nervous system. It is a validated, non-invasive method used in cardiology, mental health, athletic performance, and cognitive research. 
+                    <br><br>
+                    HRV shows how well your body copes with stress. Developed in the 1960s, HRV has been referenced in over 25,000 research papers. For example:
+                    <ul>
+                        <li>HRV-guided training improved athletic performance (Kiviniemi et al., 2007).</li>
+                        <li>Lower HRV increases post-heart-attack mortality risk (Buccelletti et al., 2009).</li>
+                        <li>Depression symptoms correlate with lower HRV (Agelink et al., 2002).</li>
+                    </ul>
+                    Welltory’s algorithm uses over 12 million measurements and 5,000+ health assessments to deliver personalized insights. It provides contextual biofeedback — simple scores for stress, energy, and health — based on daily habits and physiological data. 
+                    <br><br>
+                    HRV can be measured accurately using your phone’s camera or smartwatch, making it an accessible yet powerful wellness tool.
+                </div>
+            </div>
+        </div>
     </main>  
 
     <!-- JavaScript connection -->  
     <script src="scripts/app.js"></script>  
+    <script>
+        const headers = document.querySelectorAll('.accordion-header');
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+    </script>
 </body>  
 </html>
